@@ -35,7 +35,7 @@
   
 ## 실험 내용
 AutoInt+ 모델의 성능을 개선하고자 다양한 하이퍼파라미터를 조합하여 실험을 진행하였다.  
-실험은 autoint/plus_model_train.ipynb 파일에서 수행되었으며, 실험 결과 베스트 모델을 선정하여 Streamlit으로 배포하였다.  
+실험은 **autoint/plus_model_train.ipynb** 파일에서 수행되었으며, 실험 결과 베스트 모델을 선정하여 Streamlit으로 배포하였다.  
   
 ### 실험 설정
 다음과 같은 하이퍼파라미터 조합을 대상으로 실험을 진행:
