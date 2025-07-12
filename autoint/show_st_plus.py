@@ -17,31 +17,67 @@ def load_data():
     - 사용자, 영화, 평점 데이터를 가져옵니다.
     - 앞서 저장된 모델도 불러오고 구현해둡니다.
     '''
-    project_path = os.path.abspath(os.getcwd())
-    data_dir_nm = 'data'
-    movielens_dir_nm = 'ml-1m'
-    model_dir_nm = 'model'
-    data_path = f"{project_path}/{data_dir_nm}"
-    model_path = f"{project_path}/{model_dir_nm}"
-    field_dims = np.load(f'{data_path}/autoIntMLP_field_dims.npy')
-    dropout= 0.5    # 저장한 가중치와 구조 맞추기
-    embed_dim= 32
+    # project_path = os.path.abspath(os.getcwd())
+    # data_dir_nm = 'data'
+    # movielens_dir_nm = 'ml-1m'
+    # model_dir_nm = 'model'
+    # data_path = f"{project_path}/{data_dir_nm}"
+    # model_path = f"{project_path}/{model_dir_nm}"
+    # field_dims = np.load(f'{data_path}/autoIntMLP_field_dims.npy')
+    # dropout= 0.5    # 저장한 가중치와 구조 맞추기
+    # embed_dim= 32
     
-    ratings_df = pd.read_csv(f'{data_path}/{movielens_dir_nm}/ratings_prepro.csv')
-    movies_df = pd.read_csv(f'{data_path}/{movielens_dir_nm}/movies_prepro.csv')
-    user_df = pd.read_csv(f'{data_path}/{movielens_dir_nm}/users_prepro.csv')
+    # ratings_df = pd.read_csv(f'{data_path}/{movielens_dir_nm}/ratings_prepro.csv')
+    # movies_df = pd.read_csv(f'{data_path}/{movielens_dir_nm}/movies_prepro.csv')
+    # user_df = pd.read_csv(f'{data_path}/{movielens_dir_nm}/users_prepro.csv')
 
 
-    model = AutoIntMLPModel(field_dims, embed_dim, att_layer_num=3, att_head_num=8, att_res=True, dnn_hidden_units=(32, 32), dnn_activation='relu',
-                             l2_reg_dnn=0, l2_reg_embedding=1e-5, dnn_use_bn=False, dnn_dropout=dropout, init_std=0.0001)
+    # model = AutoIntMLPModel(field_dims, embed_dim, att_layer_num=3, att_head_num=8, att_res=True, dnn_hidden_units=(32, 32), dnn_activation='relu',
+    #                          l2_reg_dnn=0, l2_reg_embedding=1e-5, dnn_use_bn=False, dnn_dropout=dropout, init_std=0.0001)
     
 
     
+    # model(tf.constant([[0] * len(field_dims)], dtype=tf.int64))
+
+    # model.load_weights(f'{model_path}/autoIntMLP_model_weights.h5') 
+    # label_encoders = joblib.load(f'{data_path}/autoIntMLP_label_encoders.pkl')
+    
+    # return user_df, movies_df, ratings_df, model, label_encoders
+
+    # 현재 파일 기준 절대 경로
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+    # 서브 디렉토리 경로
+    DATA_DIR = os.path.join(BASE_DIR, "data")
+    MODEL_DIR = os.path.join(BASE_DIR, "model")
+    ML1M_DIR = os.path.join(DATA_DIR, "ml-1m")
+
+    # 데이터 로드
+    field_dims = np.load(os.path.join(DATA_DIR, 'autoIntMLP_field_dims.npy'))
+    dropout = 0.5
+    embed_dim = 32
+
+    ratings_df = pd.read_csv(os.path.join(ML1M_DIR, 'ratings_prepro.csv'))
+    movies_df = pd.read_csv(os.path.join(ML1M_DIR, 'movies_prepro.csv'))
+    user_df = pd.read_csv(os.path.join(ML1M_DIR, 'users_prepro.csv'))
+
+    # 모델 정의 및 빌드
+    model = AutoIntMLPModel(
+        field_dims, embed_dim,
+        att_layer_num=3, att_head_num=8, att_res=True,
+        dnn_hidden_units=(32, 32), dnn_activation='relu',
+        l2_reg_dnn=0, l2_reg_embedding=1e-5,
+        dnn_use_bn=False, dnn_dropout=dropout,
+        init_std=0.0001
+    )
     model(tf.constant([[0] * len(field_dims)], dtype=tf.int64))
 
-    model.load_weights(f'{model_path}/autoIntMLP_model_weights.h5') 
-    label_encoders = joblib.load(f'{data_path}/autoIntMLP_label_encoders.pkl')
-    
+    # 가중치 로드
+    model.load_weights(os.path.join(MODEL_DIR, 'autoIntMLP_model_weights.h5'))
+
+    # 라벨 인코더 로드
+    label_encoders = joblib.load(os.path.join(DATA_DIR, 'autoIntMLP_label_encoders.pkl'))
+
     return user_df, movies_df, ratings_df, model, label_encoders
 
 
